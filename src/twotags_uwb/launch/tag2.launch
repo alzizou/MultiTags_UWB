@@ -1,0 +1,5 @@
+<launch>
+
+	<node name="tag2" pkg="twotags_uwb" type="tag2.py" output="screen" />
+
+</launch>

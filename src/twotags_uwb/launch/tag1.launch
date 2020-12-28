@@ -1,0 +1,7 @@
+<launch>
+
+	<node name="px4_com" pkg="twotags_uwb" type="px4_com.py" output="screen" />
+	<node name="tag1" pkg="twotags_uwb" type="tag1.py" output="screen" />
+
+</launch>
+

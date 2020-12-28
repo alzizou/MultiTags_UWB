@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/ali_ws/TwoTags_UWB/install
+
+Name: twotags_uwb
+Description: Description of twotags_uwb
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
