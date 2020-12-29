@@ -18,7 +18,8 @@ This_tag.settimeout(0.1)
 
 Other_tag = ('192.168.3.183',8100)
 
-anchor_str = 'E'
+anchor_str = ['C','E']
+temp_anch_str = [None]*2
 MEAS = {0,0}
 DATA_Store = np.zeros([2,2])
 DIST_tag1 = 0
@@ -51,7 +52,7 @@ def callback_quat(msg):
 
 def tag1():
 
-	global anchor_str, DATA, DIST_tag1, DIST_tag2, jsn_data_tag2
+	global anchor_str, temp_anch_str, DATA, DIST_tag1, DIST_tag2, jsn_data_tag2
 	global anchor_pos, Rover_Z_pos, Rel_dist_tags, rov_pose, rov_yaw
 
 	time_stmp = 0.0
@@ -59,6 +60,7 @@ def tag1():
 	pub_RelPose = rospy.Publisher("ROV_Rel_Pos", Vector3, queue_size=1)
 	rate = rospy.Rate(100)
 	rospy.on_shutdown(clean_shutdown)
+	serial_inst.close()
 
 	rospy.Subscriber("ROV_Quat", Quaternion, callback_quat)
 
@@ -70,23 +72,24 @@ def tag1():
 		print("Frequency of tag1 node: %.2f" % freq)
 		#----------------------------------------------------------------------------------
 		#(START) measuring distance of tag1 to the anchor
+		serial_inst.open()
 		serial_inst.flush()
-		temp_anch_str = None
-		while(temp_anch_str==None):
-			serial_inst.write(anchor_str.encode())
-			temp_anch_str = serial_inst.readline()
-		if(temp_anch_str!=None):
+		while (temp_anch_str[0]==None):
+			serial_inst.write(anchor_str[0].encode())
+			temp_anch_str[0] = serial_inst.readline()
+		if (temp_anch_str[0]!=None):
 			MEAS = distance(serial_inst)
-			if(MEAS[1] > 1):
+			if (MEAS[1] > 1):
 				DATA_Store[0][0] = MEAS[0]
 				DATA_Store[0][1] = MEAS[1]
-			if(MEAS[1] <= 1):
+			if (MEAS[1] <= 1):
 				MEAS[0] = DATA_Store[0][0]
 				MEAS[1] = DATA_Store[0][1]
 			DIST_tag1 = MEAS[1]
-			temp_anch_str = None
+			temp_anch_str[0] = None
 		print(colored(("Tag1 to Anchor Distance mm: %.6f %d \r\n" %
 			(rospy.get_time(),DIST_tag1)),"green"))
+		serial_inst.close()
 		#(END) measuring distance of tag1 to the anchor
 		#----------------------------------------------------------------------------------
 		#(START) receiving distance of tag2 to the anchor
