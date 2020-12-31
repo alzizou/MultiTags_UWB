@@ -7,7 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/ubuntu/ali_ws/TwoTags_UWB/devel:$CMAKE_PREFIX_PATH"
-export PWD='/home/ubuntu/ali_ws/TwoTags_UWB/build'
-export ROSLISP_PACKAGE_DIRECTORIES='/home/ubuntu/ali_ws/TwoTags_UWB/devel/share/common-lisp'
-export ROS_PACKAGE_PATH="/home/ubuntu/ali_ws/TwoTags_UWB/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/ali/ali_ws/MultiTags_UWB/devel:$CMAKE_PREFIX_PATH"
+export PWD='/home/ali/ali_ws/MultiTags_UWB/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/ali/ali_ws/MultiTags_UWB/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/ali/ali_ws/MultiTags_UWB/src:$ROS_PACKAGE_PATH"

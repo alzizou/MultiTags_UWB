@@ -67,14 +67,14 @@ set(twotags_uwb_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(twotags_uwb_SOURCE_PREFIX /home/ubuntu/ali_ws/TwoTags_UWB/src/twotags_uwb)
-  set(twotags_uwb_DEVEL_PREFIX /home/ubuntu/ali_ws/TwoTags_UWB/devel)
+  set(twotags_uwb_SOURCE_PREFIX /home/ali/ali_ws/MultiTags_UWB/src/twotags_uwb)
+  set(twotags_uwb_DEVEL_PREFIX /home/ali/ali_ws/MultiTags_UWB/devel)
   set(twotags_uwb_INSTALL_PREFIX "")
   set(twotags_uwb_PREFIX ${twotags_uwb_DEVEL_PREFIX})
 else()
   set(twotags_uwb_SOURCE_PREFIX "")
   set(twotags_uwb_DEVEL_PREFIX "")
-  set(twotags_uwb_INSTALL_PREFIX /home/ubuntu/ali_ws/TwoTags_UWB/install)
+  set(twotags_uwb_INSTALL_PREFIX /home/ali/ali_ws/MultiTags_UWB/install)
   set(twotags_uwb_PREFIX ${twotags_uwb_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/ubuntu/ali_ws/TwoTags_UWB/install/lib;/opt/ros/kinetic/lib)
+    foreach(path /home/ali/ali_ws/MultiTags_UWB/install/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

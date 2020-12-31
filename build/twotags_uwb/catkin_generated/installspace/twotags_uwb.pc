@@ -1,4 +1,4 @@
-prefix=/home/ubuntu/ali_ws/TwoTags_UWB/install
+prefix=/home/ali/ali_ws/MultiTags_UWB/install
 
 Name: twotags_uwb
 Description: Description of twotags_uwb

@@ -1,0 +1,8 @@
+prefix=/home/ali/ali_ws/MultiTags_UWB/devel
+
+Name: multitags_uwb
+Description: Description of multitags_uwb
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
