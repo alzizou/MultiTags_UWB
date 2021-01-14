@@ -6,6 +6,9 @@ from numpy import linalg
 class tag_dist:
 	ID
 	dist
+	dist_diff
+	diff_var1
+	diff_var2
 	anch_str
 	temp_anch_str
 	serial_inst
@@ -19,6 +22,7 @@ class tag_dist:
 	def __init__(self,inp_ID,inp_serial_inst,inp_anch_str):
 		self.ID = inp_ID
 		self.dist = 0
+		self.dist_diff = 0
 		self.serial_inst = inp_serial_inst
 		self.anch_str = inp_anch_str
 		self.temp_anch_str = None
@@ -108,3 +112,13 @@ class tag_dist:
 		self.filt_P = P + (P_dot*dt)
 		self.filt_xhat = x_hat + (x_hat_dot*dt)
 		self.filt_dist = x_hat[0][0]
+
+	def dist_differentiate(self,dt_inp):
+		k1 = 10.0
+		k2 = 1.0
+		local_diff = diff_var1 - filt_dist
+		dist_diff = ( -k1 * np.sqrt(np.abs(local_diff)) * np.sign(local_diff) ) + diff_var2
+		D_variable1 = dist_diff
+		D_variable2 = -k2 * np.sign(local_diff)
+		diff_var1 = diff_var1 + (D_variable1 * dt_inp)
+		diff_var2 = diff_var2 + (D_variable2 * dt_inp)

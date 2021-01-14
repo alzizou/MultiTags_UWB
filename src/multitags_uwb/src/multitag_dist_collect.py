@@ -5,6 +5,7 @@ import numpy as np
 import socket
 import json
 from tag_dist import tag_dist
+from slid_diff import slid_diff
 
 Anchor_Str = 'E'
 Total_Tags_Num = 3
@@ -42,15 +43,16 @@ def main():
 		time_stmp = float(rospy.get_time())
 		freq = 1.0/period
 		#-----------------------------------------------------------------------------------
-		#(START) measuring and filtering distance of all the tags to the only anchor
+		#(START) measuring,filtering and differentiating distance of all the tags to the only anchor
 		for i in range(0,Total_Tags_Num):
 			All_Tag_Dist[i].dist_collect()
 			All_Tag_Dist[i].dist_filter()
+			All_Tag_Dist[i].dist_differentiate(period)
 		#(END) measuring and filtering distance of all the tags to the only anchor
 		#-----------------------------------------------------------------------------------
 		#(START) publishing the measured distances of tags to the anchor
 		for i in range(0,Total_Tags_Num):
-			All_Data[i] = {All_Tag_Dist[i].Tag_ID,All_Tag_Dist[i].filt_dist}
+			All_Data[i] = {All_Tag_Dist[i].Tag_ID,All_Tag_Dist[i].filt_dist,All_Tag_Dist[i].dist_diff}
 		json_obj.data = json.dumps(All_Data)
 		pub_tag_dist.publish(json_obj)
 		#(END) publishing the measured distances of tags to the anchor

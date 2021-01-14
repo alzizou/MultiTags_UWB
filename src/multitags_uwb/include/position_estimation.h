@@ -3,7 +3,7 @@
 
 #endif // POSITION_ESTIMATION_H
 
-class Anchor{
+struct Anchor{
 	char str = 'A';
 	int ID = 100;
 	float global_x = 0.0;
@@ -14,7 +14,7 @@ class Anchor{
 	float local_z = 0.0;
 };
 
-class Tag{
+struct Tag{
 	int ID = 100;
 	float dist = 0.0;
 	float diff_dist = 0.0;
@@ -26,13 +26,26 @@ class Tag{
 	float local_z = 0.0;
 };
 
-class Robot_Pos{
+struct Robot_Pos{
 	float global_x = 0.0;
 	float global_y = 0.0;
 	float global_z = 0.0;
 	float local_x = 0.0;
 	float local_y = 0.0;
 	float local_z = 0.0;
+};
+
+struct Robot_attitude{
+	float roll = 0.0;
+	float pitch = 0.0;
+	float yaw = 0.0;
+	struct quat{
+	    float w = 0.0;
+	    float x = 0.0;
+	    float y = 0.0;
+	    float z = 0.0;
+	};
+	float rot_mat[3][3];
 };
 
 
@@ -56,7 +69,8 @@ class Solution{
 	int Total_num_Itr = 1e3;
 	Anchor anchor;
 	Tag TagsList[];
-	Robot_Pos robot;
+	Robot_Pos robot_pos;
+	Robot_attitude robot_att;
 	void Init(int inp_num_tags, char inp_str_anch);
 	void Construct_B(void);
 	void Construct_A(void);
@@ -66,6 +80,7 @@ class Solution{
 	void Construct_Gradient(void);
 	void Construct_Error_Norm(void);
 	void Gradient_Descent_Solver(void);
+	void Construct_Rotation_Matrix(void);
 	void Pos_Estimate(void);
 };
 
@@ -114,9 +129,9 @@ void Solution::Init(int inp_num_tags, Anchor inp_anch, Tag inp_TagsList, float i
 		alpha[i][i] = inp_alpha;
 	}
 	Construct_B();
-	robot.local_x = 0.0;
-	robot.local_y = 0.0;
-	robot.local_z = 0.0;
+	robot_pos.local_x = 0.0;
+	robot_pos.local_y = 0.0;
+	robot_pos.local_z = 0.0;
 }
 
 
@@ -202,6 +217,8 @@ void Solution::Construct_Error_Norm(void){
 void Solution::Gradient_Descent_Solver(void){
 	int num_itr = 0;
 	while (err > threshold){
+		Construct_Rotation_Matrix();
+		Construct_B();
 		Construct_A();
 		Construct_Bhat();
 		Construct_e();
@@ -225,8 +242,24 @@ void Solution::Gradient_Descent_Solver(void){
 }
 
 
+void Solution::Construct_Rotation_Matrix(void){
+	robot_att.rot_mat[0][0] = 1.0 - 2.0*(robot_att.quat.y^2) - 2.0*(robot_att.quat.z^2);
+	robot_att.rot_mat[0][1] = 2*robot_att.quat.x*robot_att.quat.y - 2*robot_att.quat.z*robot_att.quat.y;
+	robot_att.rot_mat[0][2] = 2*robot_att.quat.x*robot_att.quat.z + 2*robot_att.quat.y*robot_att.quat.w;
+
+	robot_att.rot_mat[1][0] = 2*robot_att.quat.x*robot_att.quat.y + 2*robot_att.quat.z*robot_att.quat.w;
+	robot_att.rot_mat[1][1] = 1.0 - 2.0*(robot_att.quat.x^2) - 2.0*(robot_att.quat.z^2);
+	robot_att.rot_mat[1][2] = 2*robot_att.quat.y*robot_att.quat.z - 2*robot_att.quat.x*robot_att.quat.w;
+
+	robot_att.rot_mat[2][0] = 2*robot_att.quat.x*robot_att.quat.z - 2*robot_att.quat.y*robot_att.quat.w;
+	robot_att.rot_mat[2][1] = 2*robot_att.quat.y*robot_att.quat.z + 2*robot_att.quat.x*robot_att.quat.w;
+	robot_att.rot_mat[2][2] = 1.0 - 2.0*(robot_att.quat.x^2) - 2.0*(robot_att.quat.y^2);
+}
+
 
 void Solution::Pos_Estimate(void){
-
+	robot_pos.global_x = x[0][0];
+	robot_pos.global_y = x[1][0];
+	robot_pos.global_z = x[2][0];
 }
 

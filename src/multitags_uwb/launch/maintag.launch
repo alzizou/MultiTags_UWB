@@ -1,1 +1,3 @@
 <launch>
+	<node name="multitag_dist_collect" pkg="multitags_uwb" type="multitag_dist_collect.py" output="screen" />
+</launch>
