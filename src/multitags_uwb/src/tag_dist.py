@@ -4,36 +4,24 @@ from numpy.linalg import multi_dot
 from numpy import linalg
 
 class tag_dist:
-	ID
-	dist
-	dist_diff
-	diff_var1
-	diff_var2
-	anch_str
-	temp_anch_str
-	serial_inst
-	Data_store
-	measurement
-	filt_dist
-	filt_xhat
-	filt_P
-
 
 	def __init__(self,inp_ID,inp_serial_inst,inp_anch_str):
 		self.ID = inp_ID
 		self.dist = 0
-		self.dist_diff = 0
+		self.dist_diff = 0.0
+		self.diff_var1 = 0.0
+		self.diff_var2 = 0.0
 		self.serial_inst = inp_serial_inst
 		self.anch_str = inp_anch_str
 		self.temp_anch_str = None
-		self.Data_store = {0.0,0.0}
-		self.measurement = {0.0,0.0}
+		self.Data_store = [0]*2
+		self.measurement = [0]*2
 		self.filt_dist = 0.0
 		self.filt_xhat = np.zeros([3,1])
 		self.filt_P = np.eye(3)
 
 
-	def dist(self):
+	def dist_fcn(self):
 		output = [0]*3
 		n = 0
 		data0 = self.serial_inst.readline()
@@ -50,14 +38,12 @@ class tag_dist:
 		self.measurement[1] = data
 
 
-	def dist_collect(self):
-		self.serial_inst.open()
-		self.serial_inst.flush()
+	def dist_collect(self):		
 		while (self.temp_anch_str==None):
 			self.serial_inst.write(self.anch_str.encode())
 			self.temp_anch_str = self.serial_inst.readline()
 		if (self.temp_anch_str != None):
-			self.dist()
+			self.dist_fcn()
 			if (self.measurement[1] > 1):
 				self.Data_store[0] = self.measurement[0]
 				self.Data_store[1] = self.measurement[1]
@@ -66,7 +52,6 @@ class tag_dist:
 				self.measurement[1] = self.Data_store[1]
 			self.dist = self.measurement[1]
 			self.temp_anch_str = None
-		self.serial_inst.close()
 
 
 
@@ -82,8 +67,8 @@ class tag_dist:
 		C[0][0] = 1.0
 		#----------------------------------------
 		q = 1.0
-		r = 1.0
-		eta = 0.5
+		r = 0.1
+		eta = 0.8
 		Q = np.eye(3)*q
 		R = r
 		R_inv = 1.0/R
@@ -116,9 +101,9 @@ class tag_dist:
 	def dist_differentiate(self,dt_inp):
 		k1 = 10.0
 		k2 = 1.0
-		local_diff = diff_var1 - filt_dist
-		dist_diff = ( -k1 * np.sqrt(np.abs(local_diff)) * np.sign(local_diff) ) + diff_var2
-		D_variable1 = dist_diff
+		local_diff = self.diff_var1 - self.filt_dist
+		self.dist_diff = ( -k1 * np.sqrt(np.abs(local_diff)) * np.sign(local_diff) ) + self.diff_var2
+		D_variable1 = self.dist_diff
 		D_variable2 = -k2 * np.sign(local_diff)
-		diff_var1 = diff_var1 + (D_variable1 * dt_inp)
-		diff_var2 = diff_var2 + (D_variable2 * dt_inp)
+		self.diff_var1 = self.diff_var1 + (D_variable1 * dt_inp)
+		self.diff_var2 = self.diff_var2 + (D_variable2 * dt_inp)
