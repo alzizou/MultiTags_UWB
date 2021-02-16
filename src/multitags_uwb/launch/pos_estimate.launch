@@ -1,0 +1,5 @@
+<launch>
+	<node name="px4_com" pkg="multitags_uwb" type="px4_com.py" output="screen" />
+	<node name="multitag_dist_collect" pkg="multitags_uwb" type="multitag_dist_collect.py" output="screen" />
+	<node name="position_estimation" pkg="multitags_uwb" type="position_estimation" output="screen" />
+</launch>

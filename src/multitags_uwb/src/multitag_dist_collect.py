@@ -32,7 +32,7 @@ def main():
 	time_stmp = 0.0
 	rospy.init_node("multitag_dist_collect", anonymous=True)
 	pub_tag_dist = rospy.Publisher("Tags_Distance", String, queue_size = 1)
-	rate = rospy.Rate(50)
+	rate = rospy.Rate(100)
 	json_obj = String()
 	rospy.on_shutdown(clean_shutdown)
 	for i in range(0,Total_Tags_Num):
